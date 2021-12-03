@@ -1,19 +1,26 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import logo from "./logo.svg";
+import "./App.css";
 
-const Hello: React.FunctionComponent<{
-  compiler: string;
-  framework: string;
-}> = (props) => {
+function App() {
   return (
-    <div>
-      <div>{props.compiler}</div>
-      <div>{props.framework}</div>
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          UI comes from <code>src/app.ts</code> to invest the dev environment.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn TypeScript project environment setup
+        </a>
+      </header>
     </div>
   );
-};
+}
 
-ReactDOM.render(
-  <Hello compiler="TypeScript" framework="React" />,
-  document.getElementById("root")
-);
+export default App;

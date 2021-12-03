@@ -4,7 +4,8 @@ const ESLintPlugin = require("eslint-webpack-plugin");
 const path = require("path");
 
 module.exports = {
-  entry: ["./src/index.ts", "./src/app/app.tsx"],
+  // entry: ["./src/index.tsx", "./src/app/app.tsx"],
+  entry: ["./src/index.tsx"],
   mode: "development",
   devtool: "source-map",
   plugins: [
@@ -32,6 +33,21 @@ module.exports = {
         test: /\.tsx?$/,
         use: "babel-loader",
         exclude: "/node_modules",
+      },
+      {
+        test: /\.css$/, //test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: "svg-url-loader",
+            options: {
+              limit: 10000,
+            },
+          },
+        ],
       },
     ],
   },
