@@ -1,5 +1,6 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 const path = require("path");
 
 module.exports = {
@@ -12,6 +13,9 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: "src/templates/index.html",
+    }),
+    new ESLintPlugin({
+      extensions: [".tsx", ".ts", ".js", ".jsx"], //不加就不会去检测.jsx文件了
     }),
   ],
   output: {
