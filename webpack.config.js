@@ -1,5 +1,6 @@
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const path = require("path");
 
@@ -13,10 +14,12 @@ module.exports = {
       cleanAfterEveryBuildPatterns: ["dist/build"],
     }),
     new HtmlWebpackPlugin({
-      template: "src/templates/index.html",
+      template: "public/index.html",
+      // favicon: "public/favicon.ico",
     }),
+    new FaviconsWebpackPlugin("public/favicon.ico"), // svg works too!
     new ESLintPlugin({
-      extensions: [".tsx", ".ts", ".js", ".jsx"], //不加就不会去检测.jsx文件了
+      extensions: [".tsx", ".ts", ".js", ".jsx"],
     }),
   ],
   output: {
@@ -49,6 +52,10 @@ module.exports = {
           },
         ],
       },
+      // {
+      //   test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
+      //   loader: "file-loader?name=[name].[ext]", // <-- retain original file name
+      // },
     ],
   },
   devServer: {

@@ -16,6 +16,11 @@
                 "default":"generic"
             }
         ],
-        "prettier/prettier": "error"
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine": "auto"
+          }
+        ]
     }
 }

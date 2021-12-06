@@ -1,4 +1,4 @@
-import { add } from "../src/public/utilities/numberUtilities";
+import { add } from "../src/utilities/numberUtilities";
 
 if (add(1, 2) === 3) {
   console.log("pass");
