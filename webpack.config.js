@@ -5,6 +5,7 @@ const ESLintPlugin = require("eslint-webpack-plugin");
 const path = require("path");
 
 const appBuildPath = path.resolve(__dirname, "build");
+const appSource = path.resolve(__dirname, "src");
 
 module.exports = {
   //possible value: production, development
@@ -40,9 +41,14 @@ module.exports = {
     // publicPath: "https://cdn.example.com/", //放到CDN上
     publicPath: "auto", // relative to HTML page
 
+    //浏览器开发行和工具里显示的源码模块名称
+    // devtoolModuleFilenameTemplate: "webpack:///[resource-path]",
+    // devtoolModuleFilenameTemplate:
+    //   "webpack://[namespace]/[resource-path]?[loaders]",
+    // devtoolModuleFilenameTemplate: "webpack:///[resource-path]?[loaders]",
     devtoolModuleFilenameTemplate: (info) => {
-      path
-        .relative(path.resolve(__dirname, "src"), info.absoluteResourcePath)
+      return path
+        .relative(appSource, info.absoluteResourcePath)
         .replace(/\\/g, "/");
     },
   },
@@ -93,30 +99,70 @@ module.exports = {
   },
   module: {
     rules: [
+      //  配置loader
       {
-        test: /\.tsx?$/,
-        use: "babel-loader",
-        exclude: "/node_modules",
-      },
-      {
-        test: /\.css$/, //test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-      },
-      {
-        test: /\.svg$/,
-        use: [
+        oneOf: [
           {
-            loader: "svg-url-loader",
+            // test: /\.tsx?$/,
+            test: /\.(js|mjs|jsx|ts|tsx)$/,
+            include: [appSource],
+            use: [
+              //使用哪些loader,有先后次序，从后向前执行
+              {
+                loader: "babel-loader",
+                options: {
+                  // This is a feature of `babel-loader` for webpack (not Babel itself).
+                  // It enables caching results in ./node_modules/.cache/babel-loader/
+                  // directory for faster rebuilds.
+                  cacheDirectory: true,
+                  cacheCompression: false,
+                },
+              },
+            ],
+            exclude: "/node_modules",
+          },
+          // Process any JS outside of the app with Babel.
+          // Unlike the application JS, we only compile the standard ES features.
+          {
+            test: /\.(js|mjs)$/,
+            exclude: /@babel(?:\/|\\{1,2})runtime/,
+            loader: require.resolve("babel-loader"),
             options: {
-              limit: 10000,
+              babelrc: false,
+              configFile: false,
+              compact: false,
+              cacheDirectory: true,
+              // See #6846 for context on why cacheCompression is disabled
+              cacheCompression: false,
+
+              // Babel sourcemaps are needed for debugging into node_modules
+              // code.  Without the options below, debuggers like VSCode
+              // show incorrect code and set breakpoints on the wrong lines.
+              sourceMaps: true,
+              inputSourceMap: true,
             },
           },
+          {
+            test: /\.css$/, //test: /\.css$/,
+            use: ["style-loader", "css-loader"],
+          },
+          {
+            test: /\.svg$/,
+            use: [
+              {
+                loader: "svg-url-loader",
+                options: {
+                  limit: 10000,
+                },
+              },
+            ],
+          },
+          // {
+          //   test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
+          //   loader: "file-loader?name=[name].[ext]", // <-- retain original file name
+          // },
         ],
       },
-      // {
-      //   test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
-      //   loader: "file-loader?name=[name].[ext]", // <-- retain original file name
-      // },
     ],
   },
   devServer: {
