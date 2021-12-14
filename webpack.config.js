@@ -51,6 +51,8 @@ module.exports = {
         .relative(appSource, info.absoluteResourcePath)
         .replace(/\\/g, "/");
     },
+    // this is new webpack 5 feaature to define default outpath for resource assets
+    assetModuleFilename: "static/images/[hash][ext][query]",
   },
   optimization: {
     //improvement over CommonsChunkPlugin
@@ -99,6 +101,8 @@ module.exports = {
   },
   module: {
     rules: [
+      // Disable require.ensure as it's not a standard language feature.
+      // { parser: { requireEnsure: false } },
       //  配置loader
       {
         oneOf: [
@@ -156,6 +160,15 @@ module.exports = {
                 },
               },
             ],
+          },
+          //webpack 5 feature asset-modules to replace url-loader, filter-loader, raw-loader
+          {
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            type: "asset",
+            // customize the output file folder for this type
+            generator: {
+              filename: "static/asset/[hash][ext][query]",
+            },
           },
           // {
           //   test: /\.jpe?g$|\.ico$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/,
